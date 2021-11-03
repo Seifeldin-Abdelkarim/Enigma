@@ -84,15 +84,15 @@ def encrypt(text, Alphabet):
         character = applyPlugboard(c)
 
         for rotor, count in ((r3, countF), (r2, countM), (r1, countS)):
-            character = rotorslist[rotor][Alphabet[character] + count]
+            character = rotorslist[rotor][Alphabet.index(character) + count]
             print(character)
 
-        character = refB[Alphabet[character]]
+        character = refB[Alphabet.index(character)]
         print(character)
 
         for rotor, count in ((r1, countS), (r2, countM), (r3, countF)):
             charindex = rotorslist[rotor].index(character)
-            character = list(Alphabet.keys())[charindex - count]
+            character = Alphabet[charindex - count]
             print(character + " 1")
 
         character = applyPlugboard(character)
