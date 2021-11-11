@@ -80,7 +80,9 @@ def options():
 
     while True:
         try:
-            choice = str(input("Are you going to use custom ring settings? y or n: "))
+            choice = str(
+                input("Are you going to choose a specific ringsettings? y or n: ")
+            )
             choice = choice.lower()
         except ValueError:
             print("you entered the wrong data type. ")
@@ -89,11 +91,22 @@ def options():
             print("please enter only the letters Y or N for your choice. ")
         else:
             break
+    ringset1 = 0
+    ringset2 = 0
+    ringset3 = 0
     if choice == "y":
-        ringset = input("Enter the ringsettings you want to use: ")
-        while ringset not in Alpha:
+        ringset3 = input("Enter the ringsettings value for rotor 3: ")
+        while ringset3 not in Alpha:
             print("you entered an invalid character.")
-            ringset = input("please try again: ")
+            ringset3 = input("please try again")
+        ringset2 = input("Enter the ringsettings value for rotor 2: ")
+        while ringset2 not in Alpha:
+            print("you entered an invalid character.")
+            ringset2 = input("please try again")
+        ringset1 = input("Enter the ringsettings value for rotor 1: ")
+        while ringset1 not in Alpha:
+            print("you entered an invalid character.")
+            ringset1 = input("please try again")
     while True:
         try:
             choice = str(input("Are you going to choose a specific offset? y or n: "))
@@ -112,15 +125,15 @@ def options():
         offset3 = input("Enter the offset value for rotor 3: ")
         while offset3 not in Alpha:
             print("you entered an invalid character.")
-            offset3 = input("please try again: ")
+            offset3 = input("please try again")
         offset2 = input("Enter the offset value for rotor 2: ")
         while offset2 not in Alpha:
             print("you entered an invalid character.")
-            offset2 = input("please try again: ")
+            offset2 = input("please try again")
         offset1 = input("Enter the offset value for rotor 1: ")
         while offset1 not in Alpha:
             print("you entered an invalid character.")
-            offset1 = input("please try again: ")
+            offset1 = input("please try again")
 
     text = input("please enter the text: ")
     for char in text:
@@ -128,49 +141,51 @@ def options():
             print("you entered an invalid character: ")
             text = input("please try again: ")  # keeps repeating
 
-    return r3, r2, r1, text, offset1, offset2, offset3
+    return r3, r2, r1, text, offset1, offset2, offset3, ringset1, ringset2, ringset3
 
 
-def ringsettings(text):
-    pass
-
-
-def encrypt(text, Alphabet, offset1, offset2, offset3):
+def encrypt(text, Alphabet, offset1, offset2, offset3, ringset1, ringset2, ringset3):
     character = ""
     global countF, countM, countS
-    # temp = []
+
     for offset, rotor in ((offset3, r3), (offset2, r2), (offset1, r1)):
         if offset != 0:
             index = Alphabet.index(offset)
 
-            print("index: ", index)
-
-            # temp.extend(rotorslist[rotor][:index])
             rotorslist[rotor].extend(rotorslist[rotor][:index])
-
-            print("after extending: ", rotorslist[rotor])
 
             del rotorslist[rotor][:index]
 
-            print("after delete: ", rotorslist[rotor])
+    for rotor, ringset in ((r3, ringset3), (r2, ringset2), (r1, ringset1)):
+        if ringset != 0:
+            Index = Alphabet.index(ringset)
+            for k in range(Index):
+                for i in range(len(rotorslist[rotor])):
+                    # asciiNum = ord(rotorslist[rotor][i])
+                    if rotorslist[rotor][i] == "Z":
+                        rotorslist[rotor][i] = chr(ord(rotorslist[rotor][i]) - 25)
+                    elif rotorslist[rotor][i] == "z":
+                        rotorslist[rotor][i] = chr(ord(rotorslist[rotor][i]) - 25)
+                    elif rotorslist[rotor][i] == "9":
+                        rotorslist[rotor][i] = chr(ord(rotorslist[rotor][i]) - 9)
+                    elif rotorslist[rotor][i] == " ":
+                        rotorslist[rotor][i] == " "
+                    else:
+                        rotorslist[rotor][i] = chr(ord(rotorslist[rotor][i]) + 1)
 
     for character in text:
         countF, countM, countS = rotate(countF, countM, countS)
         character = applyPlugboard(character)
 
         for rotor, count in ((r3, countF), (r2, countM), (r1, countS)):
-            # if Alphabet.index(character) + count > len(rotorslist[rotor]):
-            #     count -= 62
+
             character = rotorslist[rotor][Alphabet.index(character)]
-            print(character)
 
         character = refB[Alphabet.index(character)]
-        print(character)
 
         for rotor, count in ((r1, countS), (r2, countM), (r3, countF)):
             charindex = rotorslist[rotor].index(character)
             character = Alphabet[charindex]
-            print(character + " 1")
 
         character = applyPlugboard(character)
         Atext.append(character)
@@ -188,9 +203,7 @@ countM = 0
 countS = 0
 Atext = []
 
-r3, r2, r1, text, offset1, offset2, offset3 = options()
+r3, r2, r1, text, offset1, offset2, offset3, ringset1, ringset2, ringset3 = options()
 
-# text = "A"
 
-# text = input("here: ")
-encrypt(text, Alpha, offset1, offset2, offset3)
+encrypt(text, Alpha, offset1, offset2, offset3, ringset1, ringset2, ringset3)
