@@ -493,3 +493,5 @@ plugboard = [
     ("9", "0"),
 ]
 
+# for i in range(1, 6):
+#     print(len(rotorslist[i]))
