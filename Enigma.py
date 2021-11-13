@@ -21,9 +21,7 @@ class Enigma:
         self.offset2 = Of2
         self.offset1 = Of3
         self.Atext = Atext
-        self.rotorslist = rotorslist.copy()  # self.rotorslistB = rotorslist.copy()
-
-        self.rotorslistB = [R1, R2, R3, Of1, Of2, Of3, Atext]
+        self.rotorslist = rotorslist  # self.rotorslistB = rotorslist.copy()
 
     def applyPlugboard(
         self, character  # applies the plugboard on the text entered by the user
@@ -242,21 +240,11 @@ class Enigma:
         print(s)
         self.Atext.clear()
 
-    def reset(self):  # resets the rotors to their initial settings
-        self.__init__(
-            self.rotorslistB[0],
-            self.rotorslistB[1],
-            self.rotorslistB[2],
-            self.rotorslistB[3],
-            self.rotorslistB[4],
-            self.rotorslistB[5],
-            self.rotorslistB[6],
-        )
-        # self.rotorslist = self.rotorslistB
-
     def mainmenu(self, Alpha):  # the main menu that will appear infornt of the user
         flag = 0
         count = False
+        rs = 0
+        ofs = 0
         self.clear()
         print(
             "Welcome to the Enigma machine, customize the settings of the machine before you start. "
@@ -266,14 +254,13 @@ class Enigma:
             print("2) Ring settings")
             print("3) Offset of the Rotors")
             print("4) Encrypt/Decrypt Text")
-            print("5) Exit the machine")
             while True:
                 try:
                     choice = int(input("What is your choice?: "))  # the user's choice
                 except ValueError:
                     print("you entered the wrong data type. ")
                     continue
-                if choice > 5 or choice < 1:
+                if choice > 4 or choice < 1:
                     print("please enter choices between 1 and 5")
                 else:
                     break
@@ -283,24 +270,30 @@ class Enigma:
                 count = True
                 sleep(0.5)  # sleep() is used to stop the process for 0.5 sec
                 self.clear()  # clear() clears the terminal
-            elif choice == 2 and count == True:
+            elif choice == 2 and count == True and rs == 0:
                 self.clear()
-                self.reset()
                 self.ringsettings(Alpha, r3, r2, r1)
+                rs = 1
                 sleep(0.5)
-            elif choice == 3 and count == True:
+            elif choice == 2 and rs == 1:
                 self.clear()
-                self.reset()
+                print(
+                    "You already entered the machine's settings, restart the program to choose the settings again"
+                )
+            elif choice == 3 and count == True and ofs == 0:
+                self.clear()
                 self.offsetsettings(Alpha, r3, r2, r1)
+                ofs = 1
                 sleep(0.5)
+            elif choice == 3 and ofs == 1:
+                self.clear()
+                print(
+                    "You already entered the machine's settings, restart the program to choose the settings again"
+                )
             elif choice == 4 and count == True:
                 self.clear()
                 self.encrypt(Alpha, r3, r2, r1)
-                self.reset()
                 sleep(0.5)
-            elif choice == 5:
-                self.clear()
-                print("Come again next time :)")
                 break
             else:
                 self.clear()
